@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Uganda News Aggregator - Real-time news updates from across Uganda">
+    <meta name="theme-color" content="#ff6b35">
+    <title>Uganda News - Live Updates</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #ff6b35;
+            --primary-dark: #e55a24;
+            --bg-light: #f5f5f5;
+            --bg-dark: #1a1a1a;
+            --text-light: #333;
+            --text-dark: #e0e0e0;
+            --border-color: #ddd;
+            --border-dark: #444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        body.light {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark .header {
+            background-color: #2a2a2a;
+            border-bottom-color: var(--border-dark);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            white-space: nowrap;
+        }
+
+        .search-form {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+            max-width: 500px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        body.dark .search-input {
+            background-color: #3a3a3a;
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-btn {
+            padding: 0.75rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        body.dark .theme-toggle {
+            color: #aaa;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        body.dark .settings-btn {
+            color: #aaa;
+        }
+
+        .settings-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .home-header {
+            margin-bottom: 2rem;
+        }
+
+        .home-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .home-header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        body.dark .home-header p {
+            color: #aaa;
+        }
+
+        /* CATEGORY FILTER */
+        .category-filter {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            margin: 1rem 0 2rem 0;
+            scroll-behavior: smooth;
+        }
+
+        .category-filter::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .category-filter::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .category-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background-color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        body.dark .category-btn {
+            background-color: #3a3a3a;
+            border-color: var(--border-dark);
+            color: #aaa;
+        }
+
+        .category-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .category-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* NEWS GRID */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        body.dark .news-card {
+            background-color: #2a2a2a;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #ddd;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            width: fit-content;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        body.dark .card-description {
+            color: #aaa;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .source {
+            font-weight: 500;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background-color: #f9f9f9;
+            padding: 2rem 1.5rem;
+            border-right: 1px solid var(--border-color);
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        body.dark .sidebar {
+            background-color: #2a2a2a;
+            border-right-color: var(--border-dark);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bookmarks-list, .quick-links {
+            list-style: none;
+        }
+
+        .bookmarks-list li, .quick-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .bookmarks-list a, .quick-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        body.dark .bookmarks-list a, body.dark .quick-links a {
+            color: #aaa;
+        }
+
+        .bookmarks-list a:hover, .quick-links a:hover {
+            color: var(--primary-color);
+            background-color: rgba(255, 107, 53, 0.1);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        body.dark .modal-content {
+            background-color: #2a2a2a;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .article-full {
+            margin-top: 2rem;
+        }
+
+        .article-full h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-full .article-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        body.dark .article-full .article-meta {
+            color: #aaa;
+        }
+
+        .article-full img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .article-full .article-content {
+            line-height: 1.8;
+            margin: 2rem 0;
+        }
+
+        .read-more-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .read-more-link:hover {
+            text-decoration: underline;
+        }
+
+        /* LOADING & EMPTY STATES */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .no-articles {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        body.dark .no-articles {
+            color: #aaa;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* SETTINGS MODAL */
+        .settings-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        body.dark .form-group label {
+            color: #e0e0e0;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .category-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .category-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ccc;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-form {
+                max-width: none;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .home-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .category-filter {
+                gap: 0.5rem;
+            }
+
+            .category-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+<div class="app-container">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">📰 Uganda News</div>
+            <form class="search-form" id="searchForm">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search news...">
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
+                <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <section class="sidebar-section">
+                <h3>Bookmarks</h3>
+                <ul class="bookmarks-list" id="bookmarksList">
+                    <li style="color: #999; font-style: italic;">No bookmarks yet</li>
+                </ul>
+            </section>
+
+            <section class="sidebar-section">
+                <h3>Quick Links</h3>
+                <ul class="quick-links">
+                    <li><a onclick="loadHome()">🏠 Home</a></li>
+                    <li><a onclick="openSettings()">⚙️ Settings</a></li>
+                </ul>
+            </section>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="content" id="content">
+            <div class="home-header">
+                <h1>Uganda News Updates</h1>
+                <p>Stay informed with the latest news from across Uganda</p>
+            </div>
+
+            <!-- CATEGORY FILTER -->
+            <div class="category-filter" id="categoryFilter">
+                <button class="category-btn active" onclick="filterByCategory('all')">All News</button>
+                <button class="category-btn" onclick="filterByCategory('politics')">Politics</button>
+                <button class="category-btn" onclick="filterByCategory('business')">Business</button>
+                <button class="category-btn" onclick="filterByCategory('sports')">Sports</button>
+                <button class="category-btn" onclick="filterByCategory('entertainment')">Entertainment</button>
+                <button class="category-btn" onclick="filterByCategory('technology')">Technology</button>
+                <button class="category-btn" onclick="filterByCategory('health')">Health</button>
+            </div>
+
+            <!-- NEWS GRID -->
+            <div class="news-grid" id="newsGrid">
+                <div class="loading"><div class="spinner"></div><p>Loading news...</p></div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ARTICLE MODAL -->
+<div class="modal" id="articleModal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeArticle()">&times;</button>
+        <div class="article-full" id="articleFull"></div>
+    </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeSettings()">&times;</button>
+        <h2>Settings</h2>
+        <form class="settings-form" id="settingsForm">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="notificationsToggle" checked>
+                    Enable push notifications
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="autoRefreshToggle" checked>
+                    Auto-refresh news every minute
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Favorite Categories</label>
+                <div class="categories-grid" id="categoriesGrid">
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="category" value="politics" checked>
+                        Politics
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="category" value="business" checked>
+                        Business
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="category" value="sports">
+                        Sports
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="category" value="entertainment">
+                        Entertainment
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="category" value="technology">
+                        Technology
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="category" value="health">
+                        Health
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            <button type="button" class="btn btn-secondary" onclick="closeSettings()">Close</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // SAMPLE NEWS DATA - Replace with API calls
+    const sampleNews = [
+        {
+            id: 1,
+            title: "Uganda Announces New Infrastructure Development Plan",
+            description: "The government has announced a comprehensive infrastructure development initiative aimed at improving connectivity across the country.",
+            content: "Uganda's government has announced a comprehensive infrastructure development plan that will span the next five years. This initiative includes improvements to roads, bridges, and digital infrastructure across all regions of the country.",
+            image: "https://via.placeholder.com/400x200?text=Infrastructure+Plan",
+            source: "Uganda News Agency",
+            category: "politics",
+            author: "John Ssekandi",
+            date: "2026-06-03",
+            url: "#"
+        },
+        {
+            id: 2,
+            title: "Tech Startups in Uganda See Record Growth",
+            description: "Ugandan tech startups have reported record growth this quarter, with increased investment from international venture capital firms.",
+            content: "Uganda's technology sector continues to flourish with numerous startups receiving substantial funding from international investors. This growth is attributed to improved internet connectivity and a young, tech-savvy population.",
+            image: "https://via.placeholder.com/400x200?text=Tech+Growth",
+            source: "Tech Uganda Daily",
+            category: "technology",
+            author: "Sarah Kabunga",
+            date: "2026-06-02",
+            url: "#"
+        },
+        {
+            id: 3,
+            title: "Kampala United Wins Regional Football Championship",
+            description: "Kampala United FC has secured the East African regional football championship title after a thrilling final match.",
+            content: "In an exciting match played at the Mandela National Stadium, Kampala United FC defeated their regional rivals with a score of 2-1, securing the championship title for the second consecutive year.",
+            image: "https://via.placeholder.com/400x200?text=Football+Championship",
+            source: "Sports Daily Uganda",
+            category: "sports",
+            author: "Moses Okello",
+            date: "2026-06-01",
+            url: "#"
+        },
+        {
+            id: 4,
+            title: "New Hospital Opens in Fort Portal",
+            description: "A state-of-the-art hospital facility has opened in Fort Portal, improving healthcare access for the western region.",
+            content: "The Fort Portal Medical Center, equipped with modern diagnostic equipment and staffed by experienced healthcare professionals, officially opened its doors today. The facility will serve populations across western Uganda.",
+            image: "https://via.placeholder.com/400x200?text=Hospital+Opening",
+            source: "Health News Uganda",
+            category: "health",
+            author: "Dr. Patricia Namutebi",
+            date: "2026-05-31",
+            url: "#"
+        },
+        {
+            id: 5,
+            title: "Ugandan Film Wins International Award",
+            description: "A groundbreaking Ugandan film production has won recognition at an international film festival.",
+            content: "The critically acclaimed Ugandan film 'Beneath the Palms' has won the Best African Film award at the International Film Festival. This achievement highlights the growing talent and creativity in Uganda's film industry.",
+            image: "https://via.placeholder.com/400x200?text=Film+Award",
+            source: "Entertainment Weekly",
+            category: "entertainment",
+            author: "Grace Nakayima",
+            date: "2026-05-30",
+            url: "#"
+        },
+        {
+            id: 6,
+            title: "Coffee Industry Reaches Record Export Levels",
+            description: "Uganda's coffee exports have hit an all-time high, contributing significantly to the national economy.",
+            content: "Uganda's coffee sector has achieved record export volumes this year, with international demand driving production increases across coffee-growing regions. The industry continues to be a major contributor to Uganda's economy.",
+            image: "https://via.placeholder.com/400x200?text=Coffee+Export",
+            source: "Business Monitor Uganda",
+            category: "business",
+            author: "Charles Mugabe",
+            date: "2026-05-29",
+            url: "#"
+        }
+    ];
+
+    // STATE MANAGEMENT
+    let allNews = [...sampleNews];
+    let filteredNews = [...sampleNews];
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    let userPreferences = JSON.parse(localStorage.getItem('preferences')) || {
+        darkMode: false,
+        notifications: true,
+        autoRefresh: true,
+        favoriteCategories: ['politics', 'business']
+    };
+
+    let currentCategory = 'all';
+    let autoRefreshInterval = null;
+
+    // INITIALIZATION
+    function init() {
+        applyTheme();
+        loadNews();
+        setupEventListeners();
+        if (userPreferences.autoRefresh) {
+            startAutoRefresh();
+        }
+        updateBookmarks();
+    }
+
+    // THEME MANAGEMENT
+    function applyTheme() {
+        const isDark = userPreferences.darkMode || false;
+        document.body.classList.toggle('dark', isDark);
+        document.body.classList.toggle('light', !isDark);
+        updateThemeButton();
+    }
+
+    function updateThemeButton() {
+        const isDark = document.body.classList.contains('dark');
+        document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+        userPreferences.darkMode = !userPreferences.darkMode;
+        localStorage.setItem('preferences', JSON.stringify(userPreferences));
+        applyTheme();
+    }
+
+    // NEWS MANAGEMENT
+    function loadNews() {
+        renderNews(filteredNews);
+    }
+
+    function renderNews(newsArray) {
+        const newsGrid = document.getElementById('newsGrid');
+        
+        if (newsArray.length === 0) {
+            newsGrid.innerHTML = '<div class="no-articles"><p>No articles found. Try a different category.</p></div>';
+            return;
+        }
+
+        newsGrid.innerHTML = newsArray.map(article => `
+            <div class="news-card" onclick="openArticle(${article.id})">
+                <img src="${article.image}" alt="${article.title}" class="card-image">
+                <div class="card-content">
+                    <span class="category-badge">${article.category}</span>
+                    <h3 class="card-title">${article.title}</h3>
+                    <p class="card-description">${article.description}</p>
+                    <div class="card-meta">
+                        <span class="source">${article.source}</span>
+                        <span class="date">${formatDate(article.date)}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filterByCategory(category) {
+        currentCategory = category;
+        
+        // Update button styles
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        if (category === 'all') {
+            filteredNews = [...allNews];
+        } else {
+            filteredNews = allNews.filter(article => article.category === category);
+        }
+        
+        loadNews();
+    }
+
+    function searchNews(query) {
+        const searchTerm = query.toLowerCase();
+        filteredNews = allNews.filter(article => 
+            article.title.toLowerCase().includes(searchTerm) ||
+            article.description.toLowerCase().includes(searchTerm) ||
+            article.content.toLowerCase().includes(searchTerm)
+        );
+        loadNews();
+    }
+
+    // ARTICLE MODAL
+    function openArticle(id) {
+        const article = allNews.find(a => a.id === id);
+        if (!article) return;
+
+        const modal = document.getElementById('articleModal');
+        const articleContent = document.getElementById('articleFull');
+
+        articleContent.innerHTML = `
+            <h2>${article.title}</h2>
+            <div class="article-meta">
+                <span><strong>${article.source}</strong></span>
+                <span>${formatDate(article.date)}</span>
+                <span>By ${article.author}</span>
+            </div>
+            <img src="${article.image}" alt="${article.title}">
+            <div class="article-content">
+                <p>${article.description}</p>
+                <p>${article.content}</p>
+            </div>
+            <button class="btn btn-primary" onclick="bookmarkArticle(${article.id})">
+                ${bookmarks.some(b => b.id === id) ? '❤️ Bookmarked' : '🤍 Bookmark'}
+            </button>
+            <a href="${article.url}" target="_blank" class="read-more-link">Read full article →</a>
+        `;
+
+        modal.classList.add('active');
+    }
+
+    function closeArticle() {
+        document.getElementById('articleModal').classList.remove('active');
+    }
+
+    // BOOKMARKS
+    function bookmarkArticle(id) {
+        const article = allNews.find(a => a.id === id);
+        if (!article) return;
+
+        const index = bookmarks.findIndex(b => b.id === id);
+        if (index > -1) {
+            bookmarks.splice(index, 1);
+        } else {
+            bookmarks.push(article);
+        }
+
+        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+        updateBookmarks();
+        alert(index > -1 ? 'Removed from bookmarks' : 'Added to bookmarks!');
+    }
+
+    function updateBookmarks() {
+        const bookmarksList = document.getElementById('bookmarksList');
+        if (bookmarks.length === 0) {
+            bookmarksList.innerHTML = '<li style="color: #999; font-style: italic;">No bookmarks yet</li>';
+        } else {
+            bookmarksList.innerHTML = bookmarks.map(article => `
+                <li><a onclick="openArticle(${article.id})">${article.title.substring(0, 50)}...</a></li>
+            `).join('');
+        }
+    }
+
+    // SETTINGS
+    function openSettings() {
+        const modal = document.getElementById('settingsModal');
+        document.getElementById('notificationsToggle').checked = userPreferences.notifications;
+        document.getElementById('autoRefreshToggle').checked = userPreferences.autoRefresh;
+
+        document.querySelectorAll('#categoriesGrid input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = userPreferences.favoriteCategories.includes(checkbox.value);
+        });
+
+        modal.classList.add('active');
+    }
+
+    function closeSettings() {
+        document.getElementById('settingsModal').classList.remove('active');
+    }
+
+    function saveSettings() {
+        userPreferences.notifications = document.getElementById('notificationsToggle').checked;
+        const autoRefreshWas = userPreferences.autoRefresh;
+        userPreferences.autoRefresh = document.getElementById('autoRefreshToggle').checked;
+
+        userPreferences.favoriteCategories = Array.from(
+            document.querySelectorAll('#categoriesGrid input[type="checkbox"]:checked')
+        ).map(cb => cb.value);
+
+        localStorage.setItem('preferences', JSON.stringify(userPreferences));
+
+        if (userPreferences.autoRefresh && !autoRefreshWas) {
+            startAutoRefresh();
+        } else if (!userPreferences.autoRefresh && autoRefreshWas) {
+            stopAutoRefresh();
+        }
+
+        alert('Settings saved!');
+        closeSettings();
+    }
+
+    function loadHome() {
+        currentCategory = 'all';
+        filteredNews = [...allNews];
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.category-btn').classList.add('active');
+        loadNews();
+    }
+
+    // AUTO REFRESH
+    function startAutoRefresh() {
+        autoRefreshInterval = setInterval(() => {
+            console.log('Auto-refreshing news...');
+            // In production, fetch from API
+        }, 60000); // Every minute
+    }
+
+    function stopAutoRefresh() {
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+        }
+    }
+
+    // EVENT LISTENERS
+    function setupEventListeners() {
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        document.getElementById('settingsBtn').addEventListener('click', openSettings);
+        document.getElementById('searchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            searchNews(query);
+            document.getElementById('searchInput').value = '';
+        });
+
+        // Close modals on outside click
+        window.addEventListener('click', (e) => {
+            const articleModal = document.getElementById('articleModal');
+            const settingsModal = document.getElementById('settingsModal');
+            if (e.target === articleModal) closeArticle();
+            if (e.target === settingsModal) closeSettings();
+        });
+    }
+
+    // UTILITIES
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    // START APP
+    init();
+</script>
+</body>
+</html>
